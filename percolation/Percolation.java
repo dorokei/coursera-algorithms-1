@@ -74,6 +74,8 @@ public class Percolation {
     }
 
     private void checkRoot(int row, int col) {
+        row -= 1;
+        col -= 1;
         Cell c = grids[row][col];
         Cell root = root(c);
         System.out.println(row + ", " + col + "'s parents: " + c.parentRow + ", " + c.parentCol);
@@ -82,6 +84,8 @@ public class Percolation {
 
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
+        row -= 1;
+        col -= 1;
         if (row >= maxLength || col >= maxLength) {
             throw new IllegalArgumentException(
                     "row:" + row + ", col:" + col + ", maxLength:" + maxLength);
@@ -141,6 +145,8 @@ public class Percolation {
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
+        row -= 1;
+        col -= 1;
         if (row >= maxLength || col >= maxLength) {
             throw new IllegalArgumentException(
                     "row:" + row + ", col:" + col + ", maxLength:" + maxLength);
@@ -150,6 +156,8 @@ public class Percolation {
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
+        row -= 1;
+        col -= 1;
         if (row >= maxLength || col >= maxLength) {
             throw new IllegalArgumentException(
                     "row:" + row + ", col:" + col + ", maxLength:" + maxLength);
@@ -180,22 +188,22 @@ public class Percolation {
     private static void test1() {
         Percolation p = new Percolation(3);
 
-        p.checkRoot(0, 1);
-        System.out.println("Open 0,1");
-        p.open(0, 1);
-        p.checkRoot(0, 1);
+        p.checkRoot(1, 2);
+        System.out.println("Open 1,2");
+        p.open(1, 2);
+        p.checkRoot(1, 2);
 
-        p.checkRoot(1, 1);
-        System.out.println("Open 1,1");
-        p.open(1, 1);
-        p.checkRoot(1, 1);
+        p.checkRoot(2, 2);
+        System.out.println("Open 2,2");
+        p.open(2, 2);
+        p.checkRoot(2, 2);
 
-        p.checkRoot(2, 1);
-        System.out.println("Open 2,1");
-        p.open(2, 1);
-        p.checkRoot(2, 1);
+        p.checkRoot(3, 2);
+        System.out.println("Open 3,2");
+        p.open(3, 2);
+        p.checkRoot(3, 2);
 
-        // if (p.isFull(1, 1)) System.out.println("1,1 is full.");
+        if (p.isFull(2, 2)) System.out.println("2,2 is full.");
         if (p.percolates()) System.out.println("percolates!");
         // p.checkRoot(4, 4);
         // p.checkRoot(3, 3);

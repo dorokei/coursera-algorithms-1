@@ -5,8 +5,8 @@
  **************************************************************************** */
 
 public class Percolation {
-    private int maxLength;
-    private Cell[][] grids;
+    private final int maxLength;
+    private final Cell[][] grids;
     private int openNum;
     private final int topRootIndex;
     private final int bottomRootIndex;
@@ -27,6 +27,10 @@ public class Percolation {
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException();
+        }
+
         topRootIndex = n;
         bottomRootIndex = n + 1;
         grids = new Cell[n + 2][n + 2];
@@ -62,8 +66,9 @@ public class Percolation {
         int b = c.parentCol;
         while (!(a == grids[a][b].parentRow &&
                 b == grids[a][b].parentCol)) {
-            a = grids[a][b].parentRow;
-            b = grids[a][b].parentCol;
+            Cell cell = grids[a][b];
+            a = cell.parentRow;
+            b = cell.parentCol;
         }
         return grids[a][b];
     }
@@ -77,6 +82,11 @@ public class Percolation {
 
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
+        if (row >= maxLength || col >= maxLength) {
+            throw new IllegalArgumentException(
+                    "row:" + row + ", col:" + col + ", maxLength:" + maxLength);
+        }
+
         Cell c = grids[row][col];
         if (c.isOpen) return;
 
@@ -85,25 +95,21 @@ public class Percolation {
 
         // top
         if (row - 1 >= 0 && grids[row - 1][col].isOpen) {
-            debug("Connect to top");
             connect(c, grids[row - 1][col]);
         }
 
         // right
         if (col + 1 <= maxLength - 1 && grids[row][col + 1].isOpen) {
-            debug("Connect to right");
             connect(c, grids[row][col + 1]);
         }
 
         // bottom
         if (row + 1 <= maxLength - 1 && grids[row + 1][col].isOpen) {
-            debug("Connect to bottom");
             connect(c, grids[row + 1][col]);
         }
 
         // left
         if (col - 1 >= 0 && grids[row][col - 1].isOpen) {
-            debug("Connect to left");
             connect(c, grids[row][col - 1]);
         }
     }
@@ -112,9 +118,6 @@ public class Percolation {
         Cell rootA = root(a);
         Cell rootB = root(b);
         if (rootA.parentRow == rootB.parentRow && rootA.parentCol == rootB.parentCol) return;
-
-        debug("A:" + rootA.parentRow + "," + rootA.parentCol + " + B:" + rootB.parentRow + ","
-                      + rootB.parentCol);
 
         if (rootA.sz > rootB.sz) {
             // Add B to A
@@ -138,11 +141,20 @@ public class Percolation {
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
+        if (row >= maxLength || col >= maxLength) {
+            throw new IllegalArgumentException(
+                    "row:" + row + ", col:" + col + ", maxLength:" + maxLength);
+        }
         return grids[row][col].isOpen;
     }
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
+        if (row >= maxLength || col >= maxLength) {
+            throw new IllegalArgumentException(
+                    "row:" + row + ", col:" + col + ", maxLength:" + maxLength);
+        }
+
         Cell c = grids[row][col];
         Cell topRoot = grids[topRootIndex][topRootIndex];
         return connected(c, topRoot);
@@ -155,13 +167,9 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return isFull(bottomRootIndex, bottomRootIndex);
-    }
-
-    private void debug(String s) {
-        if (true) {
-            System.out.println(s);
-        }
+        Cell topRoot = grids[topRootIndex][topRootIndex];
+        Cell bottomRoot = grids[bottomRootIndex][bottomRootIndex];
+        return connected(bottomRoot, topRoot);
     }
 
     // test client (optional)
@@ -169,27 +177,27 @@ public class Percolation {
         test1();
     }
 
-    public static void test1() {
+    private static void test1() {
         Percolation p = new Percolation(3);
 
-        // p.checkRoot(0, 1);
+        p.checkRoot(0, 1);
         System.out.println("Open 0,1");
         p.open(0, 1);
-        // p.checkRoot(0, 1);
+        p.checkRoot(0, 1);
 
-        // p.checkRoot(1, 1);
+        p.checkRoot(1, 1);
         System.out.println("Open 1,1");
         p.open(1, 1);
-        // p.checkRoot(1, 1);
+        p.checkRoot(1, 1);
 
         p.checkRoot(2, 1);
         System.out.println("Open 2,1");
         p.open(2, 1);
-        // p.checkRoot(2, 1);
+        p.checkRoot(2, 1);
 
         // if (p.isFull(1, 1)) System.out.println("1,1 is full.");
         if (p.percolates()) System.out.println("percolates!");
-        p.checkRoot(4, 4);
-        p.checkRoot(3, 3);
+        // p.checkRoot(4, 4);
+        // p.checkRoot(3, 3);
     }
 }

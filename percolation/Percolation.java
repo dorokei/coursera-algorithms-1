@@ -8,6 +8,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private final WeightedQuickUnionUF uf;
+    private final WeightedQuickUnionUF uf2;
     private boolean[] openArr;
     private final int length;
     private int openSum;
@@ -21,23 +22,14 @@ public class Percolation {
         length = n;
         openSum = 0;
         uf = new WeightedQuickUnionUF(n * n + 2);
+        uf2 = new WeightedQuickUnionUF(n * n + 2);
         openArr = new boolean[n * n + 2];
 
         // Connect top
         for (int i = 1; i <= n; i++) {
             uf.union(0, i);
+            uf2.union(0, i);
         }
-
-        // Connect bottom
-        for (int i = getPositonFromIndex(n, 1); i <= getPositonFromIndex(n, n); i++) {
-            uf.union(i, n * n + 1);
-        }
-    }
-
-    private void checkCanonical(int row, int col) {
-        checkRowCol(row, col);
-        int index = getPositonFromIndex(row, col);
-        System.out.println(row + "," + col + " : " + uf.find(index));
     }
 
     private void checkRowCol(int row, int col) {
@@ -51,6 +43,11 @@ public class Percolation {
         return (row - 1) * length + col;
     }
 
+    private void union(int a, int b) {
+        uf.union(a, b);
+        uf2.union(a, b);
+    }
+
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
         checkRowCol(row, col);
@@ -62,29 +59,36 @@ public class Percolation {
         openArr[index] = true;
         openSum++;
 
+        // if open bottom lines cell, connect to bottom root
+        // Connect bottom
+        if (getPositonFromIndex(length, 1) <= index && index <= getPositonFromIndex(length,
+                                                                                    length)) {
+            uf.union(index, length * length + 1);
+        }
+
         // Connect
         // Top
         if (1 < row) {
             int i = getPositonFromIndex(row - 1, col);
-            if (openArr[i]) uf.union(index, i);
+            if (openArr[i]) union(index, i);
         }
 
         // Right
         if (col < length) {
             int i = getPositonFromIndex(row, col + 1);
-            if (openArr[i]) uf.union(index, i);
+            if (openArr[i]) union(index, i);
         }
 
         // Bottom
         if (row < length) {
             int i = getPositonFromIndex(row + 1, col);
-            if (openArr[i]) uf.union(index, i);
+            if (openArr[i]) union(index, i);
         }
 
         // Left
         if (1 < col) {
             int i = getPositonFromIndex(row, col - 1);
-            if (openArr[i]) uf.union(index, i);
+            if (openArr[i]) union(index, i);
         }
     }
 
@@ -99,7 +103,7 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         checkRowCol(row, col);
         int index = getPositonFromIndex(row, col);
-        return uf.find(0) == uf.find(index) && openArr[index];
+        return uf2.find(0) == uf2.find(index) && openArr[index];
     }
 
     // returns the number of open sites
@@ -114,24 +118,6 @@ public class Percolation {
 
     // test client (optional)
     public static void main(String[] args) {
-        Percolation p = new Percolation(3);
-
-        p.checkCanonical(1, 2);
-        System.out.println("Open 1,2");
-        p.open(1, 2);
-        p.checkCanonical(1, 2);
-
-        p.checkCanonical(2, 2);
-        System.out.println("Open 2,2");
-        p.open(2, 2);
-        p.checkCanonical(2, 2);
-
-        System.out.println("Open 3,2");
-        p.open(3, 2);
-        p.checkCanonical(3, 2);
-
-        if (p.isFull(2, 2)) System.out.println("2,2 is full.");
-        if (p.percolates()) System.out.println("percolates!");
 
     }
 }

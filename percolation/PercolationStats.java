@@ -10,6 +10,8 @@ import edu.princeton.cs.algs4.StdStats;
 public class PercolationStats {
     private final double[] results;
     private final double CONFIDENCE_95 = 1.96;
+    private final double mean;
+    private final double stddev;
 
     // perform independent trials on an n-by-n grid
     public PercolationStats(int n, int trials) {
@@ -28,16 +30,19 @@ public class PercolationStats {
 
             results[i] = p.numberOfOpenSites() / total;
         }
+
+        mean = StdStats.mean(results);
+        stddev = StdStats.stddev(results);
     }
 
     // sample mean of percolation threshold
     public double mean() {
-        return StdStats.mean(results);
+        return mean;
     }
 
     // sample standard deviation of percolation threshold
     public double stddev() {
-        return StdStats.stddev(results);
+        return stddev;
     }
 
     // low endpoint of 95% confidence interval

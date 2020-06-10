@@ -1,3 +1,9 @@
+/* *****************************************************************************
+ *  Name: Keita Ono
+ *  Date: 2020/06/10
+ *  Description: Cousera homework
+ **************************************************************************** */
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 

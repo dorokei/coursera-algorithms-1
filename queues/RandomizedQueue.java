@@ -22,12 +22,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // is the randomized queue empty?
     public boolean isEmpty() {
-        return n == 0;
+        return size() == 0;
     }
 
     // return the number of items on the randomized queue
     public int size() {
-        return items.length;
+        return n - dequedItemCount;
     }
 
     private void resize(int size) {
@@ -84,13 +84,20 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // return a random item (but do not remove it)
     public Item sample() {
         if (isEmpty()) throw new NoSuchElementException();
-        int index = StdRandom.uniform(n);
-        return items[index];
+
+        if (n > 0 && (n - dequedItemCount) <= n / 2) resize(items.length);
+
+        Item item = null;
+        while (item == null) {
+            int index = StdRandom.uniform(n);
+            item = items[index];
+        }
+        return item;
     }
 
     // return an independent iterator over items in random order
     public Iterator<Item> iterator() {
-        return new ListIterator(items);
+        return new ListIterator(items, size());
     }
 
     private class ListIterator implements Iterator<Item> {
@@ -98,24 +105,36 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         private int[] indice;
         private int m;
 
-        public ListIterator(Item[] originals) {
-            items = (Item[]) new Object[originals.length];
-            indice = new int[originals.length];
-            for (int i = 0; i < n; i++) {
-                items[i] = originals[i];
-                indice[i] = i;
+        public ListIterator(Item[] originals, int size) {
+            items = (Item[]) new Object[size];
+            indice = new int[size];
+            int j = 0;
+            for (int i = 0; i < originals.length; i++) {
+                if (originals[i] != null) {
+                    items[j] = originals[i];
+                    indice[j] = j;
+                    j++;
+                }
             }
+            // System.out.println("j: " + j);
+            // for (int i : indice) {
+            //     System.out.println("before i: " + i);
+            // }
             StdRandom.shuffle(indice);
+            // for (int i : indice) {
+            //     System.out.println("after i: " + i);
+            // }
             m = 0;
         }
 
         public boolean hasNext() {
-            return m != indice.length - 1;
+            return m != indice.length;
         }
 
         public Item next() {
             if (!hasNext()) throw new NoSuchElementException();
             Item item = items[indice[m++]];
+            // System.out.println("after m: " + m);
             return item;
         }
 
@@ -128,12 +147,32 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // unit testing (required)
     public static void main(String[] args) {
         RandomizedQueue<String> randomizedQueue = new RandomizedQueue<String>();
-        randomizedQueue.enqueue("A");
-        randomizedQueue.enqueue("B");
-        randomizedQueue.enqueue("C");
-        System.out.println("dequeue: " + randomizedQueue.dequeue());
-        System.out.println("dequeue: " + randomizedQueue.dequeue());
-        System.out.println("dequeue: " + randomizedQueue.dequeue());
-    }
 
+        int n = 100;
+        System.out.println(n + " times enqueue and dequeue");
+        for (int i = 0; i < n; i++) {
+            randomizedQueue.enqueue("A");
+            System.out.println("size(" + (i + 1) + "): " + randomizedQueue.size());
+        }
+
+        for (int i = 0; i < n; i++) {
+            randomizedQueue.dequeue();
+            System.out.println("size(" + (100 - i - 1) + "): " + randomizedQueue.size());
+        }
+
+        assert randomizedQueue.isEmpty();
+        int m = 5;
+        for (int i = 0; i < m; i++) {
+            randomizedQueue.enqueue("A" + i);
+        }
+
+        System.out.println("size: " + randomizedQueue.size());
+        Iterator<String> stringIterator = randomizedQueue.iterator();
+
+        int i = 1;
+        while (stringIterator.hasNext()) {
+            System.out.println(i + "th: " + stringIterator.next());
+            i++;
+        }
+    }
 }

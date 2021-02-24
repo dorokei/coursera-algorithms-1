@@ -41,13 +41,13 @@ public class BruteCollinearPoints {
                         if (pointI.slopeTo(pointJ) == pointI.slopeTo(pointK)
                                 && pointI.slopeTo(pointK) == pointI.slopeTo(pointL)
                         ) {
-                            Point[] for_points = new Point[4];
-                            for_points[0] = pointI;
-                            for_points[1] = pointJ;
-                            for_points[2] = pointK;
-                            for_points[3] = pointL;
-                            Arrays.sort(for_points);
-                            LineSegment a = new LineSegment(for_points[0], for_points[3]);
+                            Point[] four_points = new Point[4];
+                            four_points[0] = pointI;
+                            four_points[1] = pointJ;
+                            four_points[2] = pointK;
+                            four_points[3] = pointL;
+                            Arrays.sort(four_points);
+                            LineSegment a = new LineSegment(four_points[0], four_points[3]);
                             segmentsAL.add(a);
                         }
                     }

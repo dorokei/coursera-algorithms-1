@@ -5,6 +5,7 @@
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +73,7 @@ public class BruteCollinearPoints {
      * @return The line segments
      */
     public LineSegment[] segments() {
-        return segments;
+        return segments.clone();
     }
 
     /**
@@ -80,7 +81,7 @@ public class BruteCollinearPoints {
      */
     public static void main(String[] args) {
         // read the n points from a file
-        System.out.print("Start\n");
+        StdOut.println("Start");
         In in = new In(args[0]);
         int n = in.readInt();
         Point[] points = new Point[n];
@@ -91,24 +92,12 @@ public class BruteCollinearPoints {
             points[i] = new Point(x, y);
         }
 
-        // draw the points
-//        StdDraw.enableDoubleBuffering();
-//        StdDraw.setXscale(0, 32768);
-//        StdDraw.setYscale(0, 32768);
-//        for (Point p : points) {
-//            p.draw();
-//        }
-        // StdDraw.show();
-
         // print and draw the line segments
-        System.out.print("Result\n");
+        StdOut.println("Result");
         BruteCollinearPoints collinear = new BruteCollinearPoints(points);
         for (LineSegment segment : collinear.segments()) {
-            // StdOut.println(segment);
-            // segment.draw();
-            System.out.print(segment.toString() + "\n");
+            StdOut.println(segment);
         }
-        // StdDraw.show();
-        System.out.print("End\n");
+        StdOut.println("End");
     }
 }

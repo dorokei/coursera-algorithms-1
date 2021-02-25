@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 // finds all line segments containing 4 or more points
 public class FastCollinearPoints {
-    private Point[] points;
     private LineSegment[] segments;
 
     public FastCollinearPoints(Point[] points) {
@@ -25,23 +24,6 @@ public class FastCollinearPoints {
             }
         }
 
-        this.points = points;
-    }
-
-    // The number of line segments
-    public int numberOfSegments() {
-        return segments().length;
-    }
-
-    /**
-     * should include each maximal line segment containing 4 (or more) points exactly once.
-     * For example, if 5 points appear on a line segment in the order p→q→r→s→t,
-     * then do not include the subsegments p→s or q→t.
-     *
-     * @return The line segments
-     */
-    public LineSegment[] segments() {
-        if (segments != null) return segments;
         ArrayList<LineSegment> segmentsAL = new ArrayList<LineSegment>();
 
         for (int i = 0; i < points.length; i++) {
@@ -74,16 +56,10 @@ public class FastCollinearPoints {
                         // and sort
                         Arrays.sort(pointsInline);
 
-                        // create segment and add to collection
-                        LineSegment a = new LineSegment(pointsInline[0], pointsInline[pointsInline.length - 1]);
-
-                        boolean found = false;
-                        for (LineSegment s : segmentsAL) {
-                            if (s.toString().equals(a.toString())) found = true;
-                        }
-                        if (!found) {
+                        // if the peak point is equal to origin, add to an array
+                        if (pointsInline[0].equals(origin)) {
+                            LineSegment a = new LineSegment(pointsInline[0], pointsInline[pointsInline.length - 1]);
                             segmentsAL.add(a);
-                            // StdOut.println("Added: " + a.toString());
                         }
                     }
                 }
@@ -96,7 +72,22 @@ public class FastCollinearPoints {
         }
 
         segments = segmentsAL.toArray(new LineSegment[segmentsAL.size()]);
-        return segments;
+    }
+
+    // The number of line segments
+    public int numberOfSegments() {
+        return segments().length;
+    }
+
+    /**
+     * should include each maximal line segment containing 4 (or more) points exactly once.
+     * For example, if 5 points appear on a line segment in the order p→q→r→s→t,
+     * then do not include the subsegments p→s or q→t.
+     *
+     * @return The line segments
+     */
+    public LineSegment[] segments() {
+        return segments.clone();
     }
 
     /**
